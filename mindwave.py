@@ -50,12 +50,10 @@ class Headset(object):
             while True:
                 # Begin listening for packets
                 try:
-                    first=s.read()
-                    second=s.read()
-                    if first == SYNC and second == SYNC:
+                    if s.read() == SYNC and s.read() == SYNC:
                         # Packet found, determine plength
                         while True:
-                            plength = ord(s.read())
+                            plength = s.read()[0]
                             if plength != 170:
                                 break
                         if plength > 170:
@@ -65,10 +63,14 @@ class Headset(object):
                         payload = s.read(plength)
 
                         # Verify its checksum
-                        val = sum(ord(b) for b in payload[:-1])
+                        val = sum(b for b in payload[:-1])
                         val &= 0xff
                         val = ~val & 0xff
-                        chksum = ord(s.read())
+                        chksum = s.read()[0]
+#                        if val == chksum:
+#                            print('Checksum checks okay')
+#                        else:
+#                            print('Value: {}, checksum {}'.format(val, chksum))
 
                         #if val == chksum:
                         if True: # ignore bad checksums
@@ -88,23 +90,24 @@ class Headset(object):
                     code, payload = payload[0], payload[1:]
                 except IndexError:
                     pass
-                while code == EXCODE:
+                #print('{}:{}'.format(code, EXCODE[0]))
+                while code == EXCODE[0]:
                     # Count excode bytes
                     excode += 1
                     try:
                         code, payload = payload[0], payload[1:]
                     except IndexError:
                         pass
-                if ord(code) < 0x80:
+                if code < 0x80:
                     # This is a single-byte code
                     try:
                         value, payload = payload[0], payload[1:]
                     except IndexError:
                         pass
-                    if code == POOR_SIGNAL:
+                    if code == POOR_SIGNAL[0]:
                         # Poor signal
                         old_poor_signal = self.headset.poor_signal
-                        self.headset.poor_signal = ord(value)
+                        self.headset.poor_signal = value
                         if self.headset.poor_signal > 0:
                             if old_poor_signal == 0:
                                 for handler in \
@@ -117,38 +120,38 @@ class Headset(object):
                                     self.headset.good_signal_handlers:
                                     handler(self.headset,
                                             self.headset.poor_signal)
-                    elif code == ATTENTION:
+                    elif code == ATTENTION[0]:
                         # Attention level
-                        self.headset.attention = ord(value)
+                        self.headset.attention = value
                         for handler in self.headset.attention_handlers:
                             handler(self.headset, self.headset.attention)
-                    elif code == MEDITATION:
+                    elif code == MEDITATION[0]:
                         # Meditation level
-                        self.headset.meditation = ord(value)
+                        self.headset.meditation = value
                         for handler in self.headset.meditation_handlers:
                             handler(self.headset, self.headset.meditation)
-                    elif code == BLINK:
+                    elif code == BLINK[0]:
                         # Blink strength
-                        self.headset.blink = ord(value)
+                        self.headset.blink = value
                         for handler in self.headset.blink_handlers:
                             handler(self.headset, self.headset.blink)
                 else:
                     # This is a multi-byte code
                     try:
-                        vlength, payload = ord(payload[0]), payload[1:]
+                        vlength, payload = payload[0], payload[1:]
                     except IndexError:
                         continue
                     value, payload = payload[:vlength], payload[vlength:]
                     # Multi-byte EEG and Raw Wave codes not included
                     # Raw Value added due to Mindset Communications Protocol
-                    if code == RAW_VALUE:
-                        raw=ord(value[0])*256+ord(value[1])
+                    if code == RAW_VALUE[0]:
+                        raw=value[0]*256+value[1]
                         if (raw>=32768):
                             raw=raw-65536
                         self.headset.raw_value = raw
                         for handler in self.headset.raw_value_handlers:
                             handler(self.headset, self.headset.raw_value)
-                    if code == HEADSET_CONNECTED:
+                    if code == HEADSET_CONNECTED[0]:
                         # Headset connect success
                         run_handlers = self.headset.status != STATUS_CONNECTED
                         self.headset.status = STATUS_CONNECTED
@@ -157,7 +160,7 @@ class Headset(object):
                             for handler in \
                                 self.headset.headset_connected_handlers:
                                 handler(self.headset)
-                    elif code == HEADSET_NOT_FOUND:
+                    elif code == HEADSET_NOT_FOUND[0]:
                         # Headset not found
                         if vlength > 0:
                             not_found_id = value.encode('hex')
@@ -168,20 +171,20 @@ class Headset(object):
                             for handler in \
                                 self.headset.headset_notfound_handlers:
                                 handler(self.headset, None)
-                    elif code == HEADSET_DISCONNECTED:
+                    elif code == HEADSET_DISCONNECTED[0]:
                         # Headset disconnected
                         headset_id = value.encode('hex')
                         for handler in \
                             self.headset.headset_disconnected_handlers:
                             handler(self.headset, headset_id)
-                    elif code == REQUEST_DENIED:
+                    elif code == REQUEST_DENIED[0]:
                         # Request denied
                         for handler in self.headset.request_denied_handlers:
                             handler(self.headset)
-                    elif code == STANDBY_SCAN:
+                    elif code == STANDBY_SCAN[0]:
                         # Standby/Scan mode
                         try:
-                            byte = ord(value[0])
+                            byte = value[0]
                         except IndexError:
                             byte = None
                         if byte:
