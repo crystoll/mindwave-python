@@ -1,21 +1,21 @@
 import select, serial, threading
 
 # Byte codes
-CONNECT              = '\xc0'.encode('utf-8')
-DISCONNECT           = '\xc1'.encode('utf-8')
-AUTOCONNECT          = '\xc2'.encode('utf-8')
-SYNC                 = '\xaa'.encode('utf-8')
-EXCODE               = '\x55'.encode('utf-8')
-POOR_SIGNAL          = '\x02'.encode('utf-8')
-ATTENTION            = '\x04'.encode('utf-8')
-MEDITATION           = '\x05'.encode('utf-8')
-BLINK                = '\x16'.encode('utf-8')
-HEADSET_CONNECTED    = '\xd0'.encode('utf-8')
-HEADSET_NOT_FOUND    = '\xd1'.encode('utf-8')
-HEADSET_DISCONNECTED = '\xd2'.encode('utf-8')
-REQUEST_DENIED       = '\xd3'.encode('utf-8')
-STANDBY_SCAN         = '\xd4'.encode('utf-8')
-RAW_VALUE            = '\x80'.encode('utf-8')
+CONNECT              = b'\xc0'
+DISCONNECT           = b'\xc1'
+AUTOCONNECT          = b'\xc2'
+SYNC                 = b'\xaa'
+EXCODE               = b'\x55'
+POOR_SIGNAL          = b'\x02'
+ATTENTION            = b'\x04'
+MEDITATION           = b'\x05'
+BLINK                = b'\x16'
+HEADSET_CONNECTED    = b'\xd0'
+HEADSET_NOT_FOUND    = b'\xd1'
+HEADSET_DISCONNECTED = b'\xd2'
+REQUEST_DENIED       = b'\xd3'
+STANDBY_SCAN         = b'\xd4'
+RAW_VALUE            = b'\x80'
 
 # Status codes
 STATUS_CONNECTED     = 'connected'
@@ -50,7 +50,9 @@ class Headset(object):
             while True:
                 # Begin listening for packets
                 try:
-                    if s.read() == SYNC and s.read() == SYNC:
+                    first=s.read()
+                    second=s.read()
+                    if first == SYNC and second == SYNC:
                         # Packet found, determine plength
                         while True:
                             plength = ord(s.read())
