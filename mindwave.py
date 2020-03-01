@@ -1,21 +1,21 @@
 import select, serial, threading
 
 # Byte codes
-CONNECT              = '\xc0'
-DISCONNECT           = '\xc1'
-AUTOCONNECT          = '\xc2'
-SYNC                 = '\xaa'
-EXCODE               = '\x55'
-POOR_SIGNAL          = '\x02'
-ATTENTION            = '\x04'
-MEDITATION           = '\x05'
-BLINK                = '\x16'
-HEADSET_CONNECTED    = '\xd0'
-HEADSET_NOT_FOUND    = '\xd1'
-HEADSET_DISCONNECTED = '\xd2'
-REQUEST_DENIED       = '\xd3'
-STANDBY_SCAN         = '\xd4'
-RAW_VALUE            = '\x80'
+CONNECT              = '\xc0'.encode('utf-8')
+DISCONNECT           = '\xc1'.encode('utf-8')
+AUTOCONNECT          = '\xc2'.encode('utf-8')
+SYNC                 = '\xaa'.encode('utf-8')
+EXCODE               = '\x55'.encode('utf-8')
+POOR_SIGNAL          = '\x02'.encode('utf-8')
+ATTENTION            = '\x04'.encode('utf-8')
+MEDITATION           = '\x05'.encode('utf-8')
+BLINK                = '\x16'.encode('utf-8')
+HEADSET_CONNECTED    = '\xd0'.encode('utf-8')
+HEADSET_NOT_FOUND    = '\xd1'.encode('utf-8')
+HEADSET_DISCONNECTED = '\xd2'.encode('utf-8')
+REQUEST_DENIED       = '\xd3'.encode('utf-8')
+STANDBY_SCAN         = '\xd4'.encode('utf-8')
+RAW_VALUE            = '\x80'.encode('utf-8')
 
 # Status codes
 STATUS_CONNECTED     = 'connected'
