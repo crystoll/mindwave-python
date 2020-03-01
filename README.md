@@ -5,6 +5,18 @@ Linux and Mac-friendly Python parser to connect and interact with multiple Neuro
 
 This is the software used by Moonshot Lab at Barkley (http://moonshot.barkleyus.com/) for all of our internal MindWave projects.
 
+This fork
+-----------
+
+Purpose of this fork is to port the code to Python 3, if possible, so that we could run it without disgusting unsupported ancient version of Python.
+
+Some expected steps/challenges:
+- Print statements
+- String encoding and types, unicode vs utf-8 vs hex vs byte vs int, all over
+
+Note that for testing I only have mindset mobile, to included test script and any changes are only tested against it, for lack of better automated tests in the original project.
+
+
 Basic Usage
 -----------
 

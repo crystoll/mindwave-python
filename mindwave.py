@@ -43,7 +43,7 @@ class Headset(object):
             # Re-apply settings to ensure packet stream
             s.write(DISCONNECT)
             d = s.getSettingsDict()
-            for i in xrange(2):
+            for i in range(2):
                 d['rtscts'] = not d['rtscts']
                 s.applySettingsDict(d)
 
